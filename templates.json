@@ -1,0 +1,50 @@
+{
+  "templates": [
+    {
+      "id": "yellow",
+      "label": "צהוב - תמונה אחת",
+      "group": "single",
+      "background": "./assets/yellow-bg.png",
+      "titleColor": "#e67600",
+      "preferredCount": 1,
+      "singleImageMode": "compact",
+      "dateColor": "#5a4500",
+      "captionColor": "#6d5200",
+      "imageFrame": "./assets/photo-frame.png"
+    },
+    {
+      "id": "blue",
+      "label": "תכלת - תמונה אחת",
+      "group": "single",
+      "background": "./assets/blue-bg.png",
+      "titleColor": "#0067b8",
+      "preferredCount": 1,
+      "singleImageMode": "compact",
+      "dateColor": "#003f72",
+      "captionColor": "#004f8f",
+      "imageFrame": "./assets/photo-frame.png"
+    },
+    {
+      "id": "green",
+      "label": "ירוק",
+      "group": "multi",
+      "background": "./assets/green-bg.png",
+      "titleColor": "#2f6b1b",
+      "preferredCount": 4,
+      "dateColor": "#173f0e",
+      "captionColor": "#173f0e",
+      "imageFrame": "./assets/photo-frame.png"
+    },
+    {
+      "id": "pink",
+      "label": "ורוד",
+      "group": "multi",
+      "background": "./assets/pink-bg.png",
+      "titleColor": "#b0006d",
+      "preferredCount": 4,
+      "dateColor": "#6b1349",
+      "captionColor": "#6b1349",
+      "imageFrame": "./assets/photo-frame.png"
+    }
+  ]
+}
