@@ -200,14 +200,22 @@ button {
   box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
 }
 
+.page-count-label {
+  align-items: center;
+  text-align: center;
+}
+
 .page-count-control {
   display: flex;
   align-items: stretch;
+  justify-content: center;
   gap: 8px;
+  width: 100%;
+  margin-inline: auto;
 }
 
 .page-count-control .step-btn {
-  width: 42px;
+  width: 38px;
   flex-shrink: 0;
   padding: 8px 0;
   font-size: 18px;
@@ -217,11 +225,11 @@ button {
   font-weight: 700;
 }
 
-.page-count-control input[type="number"] {
-  flex: 1;
-  min-width: 0;
+.page-count-control input[type="text"] {
+  width: 52px;
+  flex: 0 0 52px;
   text-align: center;
-  padding: 10px 8px;
+  padding: 10px 6px;
   border: 1px solid #e3e6f0;
   border-radius: 12px;
   background: #f9fafc;
@@ -229,23 +237,11 @@ button {
   font-weight: 700;
 }
 
-.page-count-control input[type="number"]:focus {
+.page-count-control input[type="text"]:focus {
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.13);
   background: #fff;
-}
-
-/* hide number spinners for cleaner UI */
-.page-count-control input[type="number"]::-webkit-outer-spin-button,
-.page-count-control input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.page-count-control input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
 }
 
 .actions {

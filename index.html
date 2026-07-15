@@ -21,11 +21,13 @@
           <li>בחרי <strong>כמות תמונות</strong> (1–8).</li>
           <li>בחרי <strong>עימוד</strong> (לחיצה על הריבועים).</li>
           <li>בחרי <strong>צבע / תבנית</strong> (צהוב/תכלת לתמונה אחת, ירוק/ורוד ליותר).</li>
+          <li>כתבי <strong>כותרת</strong> ואופציונלית <strong>כותרת משנה</strong> (פונט קטן יותר).</li>
           <li>גררי או העלי <strong>תמונות</strong> לכל משבצת, וכתבי <strong>כיתוב</strong> מתחת.</li>
-          <li>לתמונות של כל הכיתה: לחצי <strong>החל על כל העמודים</strong> — שינויים יתעדכנו בכל העמודים. לחיצה שוב על <strong>ביטול החלה</strong> מאפשרת לשנות רק בעמוד הנוכחי.</li>
-          <li>לכל ילד / עותק: הזיני <strong>כמות עמודים</strong> בשדה המספר (או + / −) — נפתחים או נסגרים עמודים בהתאם.</li>
-          <li>לניקוד: קודם לחצי בתוך תיבת הטקסט הרצויה (כותרת, כותרת משנה או כיתוב) — הניקוד חל רק על <strong>התיבה שבה הפוקוס עכשיו</strong>. אחר כך לחצי <strong>ניקוד אוטומטי</strong> או <strong>הוספת ניקוד</strong> ידנית.</li>
-          <li>בסיום: <strong>הדפסת כל העמודים</strong> — 2 עמודי A5 על כל דף A4 .</li>
+          <li>לתמונות משותפות: לחצי <strong>החל על כל העמודים</strong> — שינויים יתעדכנו בכל העמודים. לחיצה שוב על <strong>ביטול החלה</strong> מאפשרת לשנות רק בעמוד הנוכחי.</li>
+          <li>עותק:<strong>כמות עמודים</strong> (כפתורי + / −, או הקלדה ואז Enter / לחיצה מחוץ לשדה).</li>
+          <li>לקפיצה מהירה בין עמודים: לחצי על מספר ב<strong>מעבר בין עמודים</strong>.</li>
+          <li>לניקוד: קודם לחצי בתוך תיבת הטקסט הרצויה (כותרת, כותרת משנה או כיתוב). אחר כך <strong>ניקוד אוטומטי</strong> (דורש אינטרנט) או <strong>הוספת ניקוד</strong> ידנית.</li>
+          <li>בסיום: <strong>הדפסת כל העמודים</strong> — 2 עמודי A5 על כל דף A4.</li>
         </ol>
         <button id="helpClose" type="button" class="ghost">סגירה</button>
       </section>
@@ -60,7 +62,7 @@
           כותרת משנה
           <input id="subtitleInput" type="text"/>
         </label>
-        <label>
+        <label class="page-count-label">
           כמות עמודים
           <div class="page-count-control">
             <button id="pageCountDec" type="button" class="ghost step-btn" title="הסרת עמוד">−</button>
