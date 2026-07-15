@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>דף קשר</title>
+    <title>דף תרחיש | Scenario Page</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <aside class="sidebar no-print">
       <div class="brand">
         <div>
-          <h1>דף קשר</h1>
-          <p class="brand-sub">2 עמודי A5 על כל דף A4</p>
+          <h1>דף תרחיש</h1>
+          <p class="brand-sub">Scenario Page · 2 עמודי A5 על כל דף A4</p>
         </div>
         <button id="helpToggle" type="button" class="help-btn" title="הוראות שימוש">?</button>
       </div>
@@ -19,13 +19,14 @@
       <section class="help-panel no-print" id="helpPanel" hidden>
         <h3>איך משתמשים?</h3>
         <ol>
-          <li>בחרי <strong>כמות תמונות</strong> (1–4).</li>
+          <li>בחרי <strong>כמות תמונות</strong> (1–8).</li>
           <li>בחרי <strong>עימוד</strong> (לחיצה על הריבועים).</li>
           <li>בחרי <strong>צבע / תבנית</strong> (צהוב/תכלת לתמונה אחת, ירוק/ורוד ליותר).</li>
+          <li>כתבי <strong>כותרת</strong> ואופציונלית <strong>כותרת משנה</strong> (פונט קטן יותר).</li>
           <li>גררי או העלי <strong>תמונות</strong> לכל משבצת, וכתבי <strong>כיתוב</strong> מתחת.</li>
           <li>לתמונות של כל הכיתה: לחצי <strong>החל על כל העמודים</strong> — שינויים יתעדכנו בכל העמודים. לחיצה שוב על <strong>ביטול החלה</strong> מאפשרת לשנות רק בעמוד הנוכחי.</li>
-          <li>לכל ילד: לחצי <strong>+ עמוד חדש</strong>, החליפי רק את התמונה האישית.</li>
-          <li>לניקוד: קודם לחצי בתוך תיבת הטקסט הרצויה (כותרת או כיתוב) — הניקוד חל רק על <strong>התיבה שבה הפוקוס עכשיו</strong>. אחר כך לחצי <strong>ניקוד אוטומטי</strong> או <strong>הוספת ניקוד</strong> ידנית.</li>
+          <li>לכל ילד / עותק: הזיני <strong>כמות עמודים</strong> בשדה המספר (או + / −) — נפתחים או נסגרים עמודים בהתאם.</li>
+          <li>לניקוד: קודם לחצי בתוך תיבת הטקסט הרצויה (כותרת, כותרת משנה או כיתוב) — הניקוד חל רק על <strong>התיבה שבה הפוקוס עכשיו</strong>. אחר כך לחצי <strong>ניקוד אוטומטי</strong> או <strong>הוספת ניקוד</strong> ידנית.</li>
           <li>בסיום: <strong>הדפסת כל העמודים</strong> — 2 עמודי A5 על כל דף A4 .</li>
         </ol>
         <button id="helpClose" type="button" class="ghost">סגירה</button>
@@ -39,6 +40,10 @@
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
           </select>
         </label>
         <label>
@@ -51,16 +56,24 @@
         </label>
         <label>
           כותרת
-          <input id="titleInput" type="text" value="דף קשר" />
+          <input id="titleInput" type="text" value="דף תרחיש" />
         </label>
         <label>
-          עמודים (לפי מספר הילדים)
+          כותרת משנה
+          <input id="subtitleInput" type="text" placeholder="אופציונלי — מוצג בפונט קטן יותר" />
+        </label>
+        <label>
+          כמות עמודים
+          <div class="page-count-control">
+            <button id="pageCountDec" type="button" class="ghost step-btn" title="הסרת עמוד">−</button>
+            <input id="pageCountInput" type="number" min="1" max="60" value="1" />
+            <button id="pageCountInc" type="button" class="ghost step-btn" title="הוספת עמוד">+</button>
+          </div>
+        </label>
+        <label>
+          מעבר בין עמודים
           <div class="pages-bar" id="pagesBar"></div>
         </label>
-        <div class="pages-actions">
-          <button id="addPageButton" type="button" class="ghost">+ עמוד חדש</button>
-          <button id="deletePageButton" type="button" class="ghost">מחיקת עמוד</button>
-        </div>
       </div>
 
       <div class="actions">

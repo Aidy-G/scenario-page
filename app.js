@@ -50,20 +50,25 @@ const templateSelect = document.getElementById("templateSelect");
 const imageCountSelect = document.getElementById("imageCountSelect");
 const layoutPicker = document.getElementById("layoutPicker");
 const titleInput = document.getElementById("titleInput");
+const subtitleInput = document.getElementById("subtitleInput");
 const printButton = document.getElementById("printButton");
 const niqqudToggle = document.getElementById("niqqudToggle");
 const autoNiqqudButton = document.getElementById("autoNiqqudButton");
 const niqqudPanel = document.getElementById("niqqudPanel");
 const pagesContainer = document.getElementById("pagesContainer");
 const pagesBar = document.getElementById("pagesBar");
-const addPageButton = document.getElementById("addPageButton");
-const deletePageButton = document.getElementById("deletePageButton");
+const pageCountInput = document.getElementById("pageCountInput");
+const pageCountInc = document.getElementById("pageCountInc");
+const pageCountDec = document.getElementById("pageCountDec");
 const printContainer = document.getElementById("printContainer");
 const slotTemplate = document.getElementById("slotTemplate");
 
 let activeTextInput = titleInput;
 let currentLayoutStyle = "a";
 let hebrewDateText = "";
+const DEFAULT_TITLE = "דף תרחיש";
+const MIN_PAGES = 1;
+const MAX_PAGES = 60;
 
 // Multi-page state: one entry per child. A new page inherits (copies) the
 // current page's images/captions, so shared class photos carry over and the
@@ -89,6 +94,22 @@ const LAYOUT_PREVIEWS = {
   4: {
     a: [[4, 8, 43, 36], [53, 8, 43, 36], [4, 54, 43, 36], [53, 54, 43, 36]],
     b: [[54, 5, 40, 18], [54, 29, 40, 18], [54, 53, 40, 18], [54, 77, 40, 18]]
+  },
+  5: {
+    a: [[4, 6, 43, 34], [53, 6, 43, 34], [2, 48, 30, 28], [35, 48, 30, 28], [68, 48, 30, 28]],
+    b: [[54, 4, 40, 16], [54, 22, 40, 16], [54, 40, 40, 16], [54, 58, 40, 16], [54, 76, 40, 16]]
+  },
+  6: {
+    a: [[4, 4, 43, 26], [53, 4, 43, 26], [4, 36, 43, 26], [53, 36, 43, 26], [4, 68, 43, 26], [53, 68, 43, 26]],
+    b: [[2, 8, 30, 38], [35, 8, 30, 38], [68, 8, 30, 38], [2, 54, 30, 38], [35, 54, 30, 38], [68, 54, 30, 38]]
+  },
+  7: {
+    a: [[2, 4, 30, 28], [35, 4, 30, 28], [68, 4, 30, 28], [1, 46, 22, 24], [26, 46, 22, 24], [51, 46, 22, 24], [76, 46, 22, 24]],
+    b: [[54, 2, 40, 12], [54, 16, 40, 12], [54, 30, 40, 12], [54, 44, 40, 12], [54, 58, 40, 12], [54, 72, 40, 12], [54, 86, 40, 12]]
+  },
+  8: {
+    a: [[4, 2, 43, 20], [53, 2, 43, 20], [4, 26, 43, 20], [53, 26, 43, 20], [4, 50, 43, 20], [53, 50, 43, 20], [4, 74, 43, 20], [53, 74, 43, 20]],
+    b: [[2, 6, 22, 40], [26, 6, 22, 40], [50, 6, 22, 40], [74, 6, 22, 40], [2, 54, 22, 40], [26, 54, 22, 40], [50, 54, 22, 40], [74, 54, 22, 40]]
   }
 };
 
@@ -280,6 +301,7 @@ function renderLayoutPicker() {
 
 function renderPagesBar() {
   pagesBar.innerHTML = "";
+  pageCountInput.value = String(pages.length);
   pages.forEach((page, i) => {
     const chip = document.createElement("button");
     chip.type = "button";
@@ -378,6 +400,81 @@ function mergeSharedSlotsInto(slotsArray) {
   return merged;
 }
 
+function createPageHeader(t) {
+  const header = document.createElement("div");
+  header.className = "page-header";
+
+  const title = document.createElement("h2");
+  title.className = "page-title";
+  title.style.color = t.titleColor;
+  title.textContent = titleInput.value.trim() || DEFAULT_TITLE;
+  header.appendChild(title);
+
+  const subtitleText = subtitleInput.value.trim();
+  if (subtitleText) {
+    const subtitle = document.createElement("p");
+    subtitle.className = "page-subtitle";
+    subtitle.style.color = t.titleColor;
+    subtitle.textContent = subtitleText;
+    header.appendChild(subtitle);
+  }
+
+  return header;
+}
+
+function syncPageHeaders() {
+  const t = getCurrentTemplate();
+  const subtitleText = subtitleInput.value.trim();
+  pagesContainer.querySelectorAll(".a5-page").forEach((pageEl) => {
+    pageEl.classList.toggle("has-subtitle", Boolean(subtitleText));
+    const titleEl = pageEl.querySelector(".page-title");
+    if (titleEl) {
+      titleEl.textContent = titleInput.value.trim() || DEFAULT_TITLE;
+      titleEl.style.color = t.titleColor;
+    }
+    let subtitleEl = pageEl.querySelector(".page-subtitle");
+    if (subtitleText) {
+      if (!subtitleEl) {
+        subtitleEl = document.createElement("p");
+        subtitleEl.className = "page-subtitle";
+        pageEl.querySelector(".page-header")?.appendChild(subtitleEl);
+      }
+      subtitleEl.textContent = subtitleText;
+      subtitleEl.style.color = t.titleColor;
+      subtitleEl.hidden = false;
+    } else if (subtitleEl) {
+      subtitleEl.remove();
+    }
+  });
+}
+
+function clonePageSlots(sourceIndex) {
+  return mergeSharedSlotsInto(
+    pages[sourceIndex].slots.map((s) => ({ ...(s || {}) }))
+  );
+}
+
+function setPageCount(rawCount) {
+  let target = Math.round(Number(rawCount) || MIN_PAGES);
+  target = Math.max(MIN_PAGES, Math.min(MAX_PAGES, target));
+  pageCountInput.value = String(target);
+
+  while (pages.length < target) {
+    const sourceIndex = Math.min(currentPage, pages.length - 1);
+    pages.push({ slots: clonePageSlots(sourceIndex) });
+  }
+
+  while (pages.length > target) {
+    pages.pop();
+  }
+
+  if (currentPage >= pages.length) {
+    currentPage = pages.length - 1;
+  }
+
+  renderAllPages();
+}
+
 function bindDropzone(dropzone, fileInput, preview, pageIndex, slotIndex) {
   function setImage(file) {
     if (!file || !file.type.startsWith("image/")) {
@@ -445,11 +542,11 @@ function buildEditablePage(pageIndex) {
   date.textContent = hebrewDateText;
   page.appendChild(date);
 
-  const title = document.createElement("h2");
-  title.className = "page-title";
-  title.style.color = t.titleColor;
-  title.textContent = titleInput.value || "דף קשר";
-  page.appendChild(title);
+  if (subtitleInput.value.trim()) {
+    page.classList.add("has-subtitle");
+  }
+
+  page.appendChild(createPageHeader(t));
 
   const grid = document.createElement("div");
   grid.className = `image-grid layout-${count}-${currentLayoutStyle}`;
@@ -543,11 +640,11 @@ function buildStaticPage(pageData) {
   date.textContent = hebrewDateText;
   page.appendChild(date);
 
-  const title = document.createElement("h2");
-  title.className = "page-title";
-  title.style.color = t.titleColor;
-  title.textContent = titleInput.value || "דף קשר";
-  page.appendChild(title);
+  if (subtitleInput.value.trim()) {
+    page.classList.add("has-subtitle");
+  }
+
+  page.appendChild(createPageHeader(t));
 
   const grid = document.createElement("div");
   grid.className = `image-grid layout-${count}-${currentLayoutStyle}`;
@@ -597,10 +694,11 @@ function buildPrintSheets() {
 /* ===== Events ===== */
 
 titleInput.addEventListener("input", () => {
-  const text = titleInput.value || "דף קשר";
-  pagesContainer.querySelectorAll(".page-title").forEach((el) => {
-    el.textContent = text;
-  });
+  syncPageHeaders();
+});
+
+subtitleInput.addEventListener("input", () => {
+  syncPageHeaders();
 });
 
 document.addEventListener("focusin", (event) => {
@@ -616,22 +714,25 @@ imageCountSelect.addEventListener("change", () => {
   applyTemplate();
 });
 
-addPageButton.addEventListener("click", () => {
-  const copy = mergeSharedSlotsInto(currentSlots().map((s) => ({ ...(s || {}) })));
-  pages.push({ slots: copy });
-  currentPage = pages.length - 1;
-  renderAllPages();
-  const target = pagesContainer.querySelector(`[data-page-index="${currentPage}"]`);
-  if (target) {
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+pageCountInc.addEventListener("click", () => {
+  setPageCount(pages.length + 1);
 });
 
-deletePageButton.addEventListener("click", () => {
-  if (pages.length <= 1) return;
-  pages.splice(currentPage, 1);
-  currentPage = Math.min(currentPage, pages.length - 1);
-  renderAllPages();
+pageCountDec.addEventListener("click", () => {
+  if (pages.length <= MIN_PAGES) return;
+  setPageCount(pages.length - 1);
+});
+
+pageCountInput.addEventListener("change", () => {
+  setPageCount(pageCountInput.value);
+});
+
+pageCountInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    setPageCount(pageCountInput.value);
+    pageCountInput.blur();
+  }
 });
 
 printButton.addEventListener("click", () => {
@@ -652,7 +753,7 @@ autoNiqqudButton.addEventListener("click", async () => {
     input.value = await autoNiqqudText(input.value);
   } finally {
     autoNiqqudButton.disabled = false;
-    autoNiqqudButton.textContent = "ניקוד אוטומטי (בטא)";
+    autoNiqqudButton.textContent = "ניקוד אוטומטי";
   }
   input.dispatchEvent(new Event("input", { bubbles: true }));
   input.focus();
