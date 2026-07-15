@@ -367,6 +367,15 @@ button.primary:hover {
   color: var(--date-color);
 }
 
+.bsd {
+  position: absolute;
+  top: 6mm;
+  right: 8mm;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--date-color);
+}
+
 .page-header {
   margin: 0 0 5mm;
   text-align: center;
@@ -389,10 +398,18 @@ button.primary:hover {
 .image-grid {
   position: relative;
   width: 100%;
+  height: calc(100% - 18mm);
+}
+
+.a5-page.has-title .image-grid {
   height: calc(100% - 38mm);
 }
 
-.a5-page.has-subtitle .image-grid {
+.a5-page.has-subtitle:not(.has-title) .image-grid {
+  height: calc(100% - 28mm);
+}
+
+.a5-page.has-title.has-subtitle .image-grid {
   height: calc(100% - 48mm);
 }
 

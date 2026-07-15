@@ -66,7 +66,6 @@ const slotTemplate = document.getElementById("slotTemplate");
 let activeTextInput = titleInput;
 let currentLayoutStyle = "a";
 let hebrewDateText = "";
-const DEFAULT_TITLE = "דף תרחיש";
 const MIN_PAGES = 1;
 const MAX_PAGES = 60;
 
@@ -402,17 +401,29 @@ function mergeSharedSlotsInto(slotsArray) {
   return merged;
 }
 
+function applyHeaderClasses(pageEl) {
+  pageEl.classList.toggle("has-title", Boolean(titleInput.value.trim()));
+  pageEl.classList.toggle("has-subtitle", Boolean(subtitleInput.value.trim()));
+}
+
 function createPageHeader(t) {
+  const titleText = titleInput.value.trim();
+  const subtitleText = subtitleInput.value.trim();
+  if (!titleText && !subtitleText) {
+    return null;
+  }
+
   const header = document.createElement("div");
   header.className = "page-header";
 
-  const title = document.createElement("h2");
-  title.className = "page-title";
-  title.style.color = t.titleColor;
-  title.textContent = titleInput.value.trim() || DEFAULT_TITLE;
-  header.appendChild(title);
+  if (titleText) {
+    const title = document.createElement("h2");
+    title.className = "page-title";
+    title.style.color = t.titleColor;
+    title.textContent = titleText;
+    header.appendChild(title);
+  }
 
-  const subtitleText = subtitleInput.value.trim();
   if (subtitleText) {
     const subtitle = document.createElement("p");
     subtitle.className = "page-subtitle";
@@ -426,24 +437,48 @@ function createPageHeader(t) {
 
 function syncPageHeaders() {
   const t = getCurrentTemplate();
+  const titleText = titleInput.value.trim();
   const subtitleText = subtitleInput.value.trim();
+
   pagesContainer.querySelectorAll(".a5-page").forEach((pageEl) => {
-    pageEl.classList.toggle("has-subtitle", Boolean(subtitleText));
-    const titleEl = pageEl.querySelector(".page-title");
-    if (titleEl) {
-      titleEl.textContent = titleInput.value.trim() || DEFAULT_TITLE;
-      titleEl.style.color = t.titleColor;
+    applyHeaderClasses(pageEl);
+
+    let headerEl = pageEl.querySelector(".page-header");
+    if (!titleText && !subtitleText) {
+      if (headerEl) {
+        headerEl.remove();
+      }
+      return;
     }
-    let subtitleEl = pageEl.querySelector(".page-subtitle");
+
+    if (!headerEl) {
+      headerEl = document.createElement("div");
+      headerEl.className = "page-header";
+      pageEl.insertBefore(headerEl, pageEl.querySelector(".image-grid"));
+    }
+
+    let titleEl = headerEl.querySelector(".page-title");
+    if (titleText) {
+      if (!titleEl) {
+        titleEl = document.createElement("h2");
+        titleEl.className = "page-title";
+        headerEl.insertBefore(titleEl, headerEl.firstChild);
+      }
+      titleEl.textContent = titleText;
+      titleEl.style.color = t.titleColor;
+    } else if (titleEl) {
+      titleEl.remove();
+    }
+
+    let subtitleEl = headerEl.querySelector(".page-subtitle");
     if (subtitleText) {
       if (!subtitleEl) {
         subtitleEl = document.createElement("p");
         subtitleEl.className = "page-subtitle";
-        pageEl.querySelector(".page-header")?.appendChild(subtitleEl);
+        headerEl.appendChild(subtitleEl);
       }
       subtitleEl.textContent = subtitleText;
       subtitleEl.style.color = t.titleColor;
-      subtitleEl.hidden = false;
     } else if (subtitleEl) {
       subtitleEl.remove();
     }
@@ -545,11 +580,17 @@ function buildEditablePage(pageIndex) {
   date.textContent = hebrewDateText;
   page.appendChild(date);
 
-  if (subtitleInput.value.trim()) {
-    page.classList.add("has-subtitle");
-  }
+  const bsd = document.createElement("div");
+  bsd.className = "bsd";
+  bsd.textContent = 'בס"ד';
+  page.appendChild(bsd);
 
-  page.appendChild(createPageHeader(t));
+  applyHeaderClasses(page);
+
+  const header = createPageHeader(t);
+  if (header) {
+    page.appendChild(header);
+  }
 
   const grid = document.createElement("div");
   grid.className = `image-grid layout-${count}-${currentLayoutStyle}`;
@@ -648,11 +689,17 @@ function buildStaticPage(pageData) {
   date.textContent = hebrewDateText;
   page.appendChild(date);
 
-  if (subtitleInput.value.trim()) {
-    page.classList.add("has-subtitle");
-  }
+  const bsd = document.createElement("div");
+  bsd.className = "bsd";
+  bsd.textContent = 'בס"ד';
+  page.appendChild(bsd);
 
-  page.appendChild(createPageHeader(t));
+  applyHeaderClasses(page);
+
+  const header = createPageHeader(t);
+  if (header) {
+    page.appendChild(header);
+  }
 
   const grid = document.createElement("div");
   grid.className = `image-grid layout-${count}-${currentLayoutStyle}`;
